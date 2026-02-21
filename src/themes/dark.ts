@@ -1,0 +1,28 @@
+import type { Theme } from '../types';
+
+export const darkTheme: Theme = {
+  id: 'dark',
+  name: 'Dark',
+  ocean: '#0d1b2a',
+  land: [
+    '#2d4a3e', '#3d3a50', '#4a3a2d', '#2d3d4a', '#3e4a2d',
+    '#4a2d3d', '#3a4a3d', '#4a3d2d', '#2d4a4a', '#3d2d4a',
+    '#3a4a2d', '#4a2d4a', '#2d3a4a', '#4a4a2d', '#2d4a3a',
+    '#3d4a4a', '#4a3a3d', '#2d3d3a', '#4a2d3a', '#3a3d4a',
+  ],
+  border: 'rgba(255, 255, 255, 0.2)',
+  borderWidth: 0.4,
+  nightOverlay: 'rgba(0, 0, 0, 0.50)',
+  twilightCivil: 'rgba(0, 0, 0, 0.32)',
+  twilightNautical: 'rgba(0, 0, 0, 0.18)',
+  twilightAstro: 'rgba(0, 0, 0, 0.08)',
+  textPrimary: '#c8d0d8',
+  textSecondary: '#8899aa',
+  textMuted: 'rgba(200, 208, 216, 0.4)',
+  uiBackground: 'rgba(10, 15, 25, 0.80)',
+  sunMarker: '#ffcc00',
+  pinColor: '#ff6b6b',
+  pinLabelColor: '#c8d0d8',
+  gridLine: 'rgba(255, 255, 255, 0.08)',
+  tzHighlight: '#ffcc00',
+};

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZuluGrid</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="canvas-container">
+      <canvas id="baseMap"></canvas>
+      <canvas id="terminator"></canvas>
+      <canvas id="overlays"></canvas>
+      <canvas id="pins"></canvas>
+      <canvas id="ui"></canvas>
+    </div>
+    <div id="settings-panel" class="settings-panel hidden"></div>
+    <div id="pin-template-overlay" class="overlay hidden"></div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>

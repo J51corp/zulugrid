@@ -1,0 +1,28 @@
+import type { Theme } from '../types';
+
+export const modernTheme: Theme = {
+  id: 'modern',
+  name: 'Modern Atlas',
+  ocean: '#aadaff',
+  land: [
+    '#e8a87c', '#85cdca', '#d5a6bd', '#b5ead7', '#ffdac1',
+    '#c7ceea', '#ffb7b2', '#e2f0cb', '#b5b8f0', '#f0e68c',
+    '#dda0dd', '#98d8c8', '#f7dc6f', '#bb8fce', '#82e0aa',
+    '#f1948a', '#85c1e9', '#f0b27a', '#a3e4d7', '#d7bde2',
+  ],
+  border: '#555555',
+  borderWidth: 0.8,
+  nightOverlay: 'rgba(10, 10, 40, 0.50)',
+  twilightCivil: 'rgba(10, 10, 40, 0.32)',
+  twilightNautical: 'rgba(10, 10, 40, 0.18)',
+  twilightAstro: 'rgba(10, 10, 40, 0.08)',
+  textPrimary: '#222222',
+  textSecondary: '#555555',
+  textMuted: 'rgba(0, 0, 0, 0.4)',
+  uiBackground: 'rgba(255, 255, 255, 0.80)',
+  sunMarker: '#ff8c00',
+  pinColor: '#e74c3c',
+  pinLabelColor: '#222222',
+  gridLine: 'rgba(0, 0, 0, 0.1)',
+  tzHighlight: '#e74c3c',
+};
