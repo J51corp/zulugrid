@@ -1,5 +1,6 @@
 import { bus } from '../events';
 import type { Pin, PinTemplate } from '../types';
+import { escapeHtml } from '../utils';
 import { pinTemplates } from './templates';
 
 const STORAGE_KEY = 'zulugrid_pins';
@@ -11,11 +12,25 @@ export class PinManager {
     this.load();
   }
 
+  private static isValidPin(p: unknown): p is Pin {
+    return (
+      typeof p === 'object' && p !== null &&
+      typeof (p as Pin).id === 'string' &&
+      typeof (p as Pin).name === 'string' &&
+      typeof (p as Pin).lat === 'number' &&
+      typeof (p as Pin).lng === 'number' &&
+      typeof (p as Pin).timezone === 'string'
+    );
+  }
+
   private load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        this.pins = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          this.pins = parsed.filter(PinManager.isValidPin);
+        }
       }
     } catch {
       this.pins = [];
@@ -72,7 +87,10 @@ export class PinManager {
   updatePin(id: string, updates: Partial<Omit<Pin, 'id'>>) {
     const pin = this.pins.find(p => p.id === id);
     if (pin) {
-      Object.assign(pin, updates);
+      if (updates.name !== undefined) pin.name = updates.name;
+      if (updates.lat !== undefined) pin.lat = updates.lat;
+      if (updates.lng !== undefined) pin.lng = updates.lng;
+      if (updates.timezone !== undefined) pin.timezone = updates.timezone;
       this.save();
       bus.emit('pins:changed', [...this.pins]);
     }
@@ -96,8 +114,8 @@ export class PinManager {
           <p>Choose a pin template to get started, or skip to add your own later.</p>
           <div class="template-list">
             ${templates.map(t => `
-              <div class="template-option" data-template="${t.id}">
-                <div class="template-name">${t.name}</div>
+              <div class="template-option" data-template="${escapeHtml(t.id)}">
+                <div class="template-name">${escapeHtml(t.name)}</div>
                 <div class="template-count">${t.pins.length} locations</div>
               </div>
             `).join('')}

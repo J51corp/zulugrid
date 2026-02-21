@@ -46,6 +46,7 @@ export class BaseMapLayer {
 
   async load() {
     const resp = await fetch(countriesUrl);
+    if (!resp.ok) throw new Error(`Failed to load map data: ${resp.status}`);
     const topo = (await resp.json()) as Topology<{ countries: GeometryCollection<CountryProperties> }>;
     this.countries = feature(topo, topo.objects.countries) as unknown as FeatureCollection<Polygon | MultiPolygon, CountryProperties>;
     this.draw();

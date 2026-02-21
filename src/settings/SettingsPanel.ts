@@ -1,5 +1,6 @@
 import { bus } from '../events';
 import { getAllThemes } from '../themes/index';
+import { escapeHtml } from '../utils';
 import type { SettingsStore } from './SettingsStore';
 import type { PinManager } from '../pins/PinManager';
 
@@ -49,7 +50,7 @@ export class SettingsPanel {
         <div class="settings-row">
           <label>Theme</label>
           <select id="setting-theme">
-            ${themes.map(t => `<option value="${t.id}" ${t.id === settings.theme ? 'selected' : ''}>${t.name}</option>`).join('')}
+            ${themes.map(t => `<option value="${escapeHtml(t.id)}" ${t.id === settings.theme ? 'selected' : ''}>${escapeHtml(t.name)}</option>`).join('')}
           </select>
         </div>
         <div class="settings-row">
@@ -99,7 +100,7 @@ export class SettingsPanel {
           <label>Load Template</label>
           <select id="setting-pinTemplate">
             <option value="">— Choose —</option>
-            ${templates.map(t => `<option value="${t.id}">${t.name} (${t.pins.length})</option>`).join('')}
+            ${templates.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.name)} (${t.pins.length})</option>`).join('')}
           </select>
         </div>
         <div id="pin-list" class="pin-list"></div>
@@ -160,7 +161,7 @@ export class SettingsPanel {
         <div class="settings-row">
           <label>Title</label>
           <input type="text" id="setting-brandingTitle"
-                 value="${settings.brandingTitle}"
+                 value="${escapeHtml(settings.brandingTitle)}"
                  placeholder="Company Name"
                  class="pin-input" style="width:140px;">
         </div>
@@ -206,10 +207,10 @@ export class SettingsPanel {
       </div>
       <div class="pin-scroll-list">
         ${pins.map(p => `
-          <div class="pin-item" data-id="${p.id}">
-            <span class="pin-item-name">${p.name}</span>
+          <div class="pin-item" data-id="${escapeHtml(p.id)}">
+            <span class="pin-item-name">${escapeHtml(p.name)}</span>
             <span class="pin-item-coords">${p.lat.toFixed(1)}, ${p.lng.toFixed(1)}</span>
-            <button class="pin-item-remove" data-id="${p.id}">&times;</button>
+            <button class="pin-item-remove" data-id="${escapeHtml(p.id)}">&times;</button>
           </div>
         `).join('')}
       </div>
@@ -279,6 +280,10 @@ export class SettingsPanel {
     logoEl?.addEventListener('change', () => {
       const file = logoEl.files?.[0];
       if (file) {
+        if (file.size > 512 * 1024) { // 512 KB limit
+          logoEl.value = '';
+          return;
+        }
         const reader = new FileReader();
         reader.onload = () => {
           this.store.set('brandingLogo', reader.result as string);
@@ -300,6 +305,7 @@ export class SettingsPanel {
     const timezone = tzEl.value.trim();
 
     if (!name || isNaN(lat) || isNaN(lng) || !timezone) return;
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return;
 
     this.pinManager.addPin({ name, lat, lng, timezone });
 

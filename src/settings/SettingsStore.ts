@@ -10,11 +10,27 @@ export class SettingsStore {
     this.settings = this.load();
   }
 
+  private static readonly ALLOWED_KEYS: ReadonlySet<string> = new Set<keyof Settings>([
+    'theme', 'mapMode', 'brightness', 'demoMode', 'demoSpeed',
+    'brandingLogo', 'brandingTitle', 'showWatermark',
+    'selectedPinTemplate', 'showTwilightBands', 'showGridLines', 'showTimezoneLabels',
+  ]);
+
   private load(): Settings {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+        const parsed = JSON.parse(raw);
+        if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+          return { ...DEFAULT_SETTINGS };
+        }
+        const sanitized: Record<string, unknown> = {};
+        for (const key of SettingsStore.ALLOWED_KEYS) {
+          if (Object.prototype.hasOwnProperty.call(parsed, key)) {
+            sanitized[key] = parsed[key];
+          }
+        }
+        return { ...DEFAULT_SETTINGS, ...sanitized } as Settings;
       }
     } catch {
       // Ignore parse errors, use defaults
@@ -55,6 +71,7 @@ export class SettingsStore {
   update(partial: Partial<Settings>) {
     let changed = false;
     for (const [key, value] of Object.entries(partial)) {
+      if (!SettingsStore.ALLOWED_KEYS.has(key)) continue;
       const k = key as keyof Settings;
       if (this.settings[k] !== value) {
         (this.settings as unknown as Record<string, unknown>)[k] = value;
