@@ -1,4 +1,4 @@
-import { geoMercator, geoPath, type GeoProjection } from 'd3-geo';
+import { geoEquirectangular, geoPath, type GeoProjection } from 'd3-geo';
 import { feature } from 'topojson-client';
 import type { Topology, GeometryCollection } from 'topojson-specification';
 import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
@@ -20,6 +20,8 @@ export class BaseMapLayer {
   private countries: FeatureCollection<Polygon | MultiPolygon, CountryProperties> | null = null;
   private cachedBitmap: ImageBitmap | null = null;
   private scrollOffset = 0;
+  private zoomLevel = 1;
+  private centerLat = 0;
 
   constructor(lm: LayerManager, theme: Theme) {
     this.lm = lm;
@@ -36,10 +38,11 @@ export class BaseMapLayer {
   private setupProjection() {
     const { width, height } = this.lm;
     // Scale so that 360° of longitude fills the full canvas width.
-    // Mercator: scale = width / (2π) maps 360° to width pixels.
-    const scale = width / (2 * Math.PI);
-    this.projection = geoMercator()
-      .center([this.scrollOffset, 0])
+    // Equirectangular: scale = width / (2π) maps 360° to width pixels.
+    // Multiply by zoomLevel to zoom in.
+    const scale = (width / (2 * Math.PI)) * this.zoomLevel;
+    this.projection = geoEquirectangular()
+      .center([this.scrollOffset, this.centerLat])
       .scale(scale)
       .translate([width / 2, height / 2]);
   }
@@ -56,6 +59,10 @@ export class BaseMapLayer {
     return this.projection;
   }
 
+  getCountries(): FeatureCollection<Polygon | MultiPolygon, CountryProperties> | null {
+    return this.countries;
+  }
+
   setTheme(theme: Theme) {
     this.theme = theme;
     this.cachedBitmap = null;
@@ -64,6 +71,38 @@ export class BaseMapLayer {
 
   setScrollOffset(offset: number) {
     this.scrollOffset = offset;
+    this.cachedBitmap = null;
+    this.setupProjection();
+    this.draw();
+  }
+
+  setZoom(zoom: number) {
+    this.zoomLevel = zoom;
+    this.cachedBitmap = null;
+    this.setupProjection();
+    this.draw();
+  }
+
+  getZoom(): number {
+    return this.zoomLevel;
+  }
+
+  setCenterLat(lat: number) {
+    this.centerLat = lat;
+    this.cachedBitmap = null;
+    this.setupProjection();
+    this.draw();
+  }
+
+  getCenterLat(): number {
+    return this.centerLat;
+  }
+
+  /** Update all view parameters at once (avoids multiple redraws) */
+  setView(offset: number, lat: number, zoom: number) {
+    this.scrollOffset = offset;
+    this.centerLat = lat;
+    this.zoomLevel = zoom;
     this.cachedBitmap = null;
     this.setupProjection();
     this.draw();
@@ -81,21 +120,31 @@ export class BaseMapLayer {
     ctx.fillStyle = this.theme.ocean;
     ctx.fillRect(0, 0, width, height);
 
-    // Draw countries
-    const path = geoPath(this.projection, ctx);
+    // Draw countries with wrapping: render three copies offset by the full
+    // 360° map width so features clipped at the antimeridian appear seamlessly.
+    // At zoom > 1, 360° spans more than the canvas width.
+    const mapWidth = width * this.zoomLevel;
+    for (const dx of [-mapWidth, 0, mapWidth]) {
+      ctx.save();
+      ctx.translate(dx, 0);
 
-    this.countries.features.forEach((feat, i) => {
-      ctx.beginPath();
-      path(feat);
-      ctx.fillStyle = this.theme.land[i % this.theme.land.length];
-      ctx.fill();
+      const path = geoPath(this.projection, ctx);
 
-      if (this.theme.borderWidth > 0) {
-        ctx.strokeStyle = this.theme.border;
-        ctx.lineWidth = this.theme.borderWidth;
-        ctx.stroke();
-      }
-    });
+      this.countries.features.forEach((feat, i) => {
+        ctx.beginPath();
+        path(feat);
+        ctx.fillStyle = this.theme.land[i % this.theme.land.length];
+        ctx.fill();
+
+        if (this.theme.borderWidth > 0) {
+          ctx.strokeStyle = this.theme.border;
+          ctx.lineWidth = this.theme.borderWidth;
+          ctx.stroke();
+        }
+      });
+
+      ctx.restore();
+    }
 
     // Cache bitmap for fast redraws
     if (typeof createImageBitmap !== 'undefined') {

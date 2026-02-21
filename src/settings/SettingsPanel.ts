@@ -33,6 +33,10 @@ export class SettingsPanel {
         const el = this.panel.querySelector('#setting-theme') as HTMLSelectElement | null;
         if (el) el.value = partial.theme;
       }
+      if (partial.centerSun !== undefined) {
+        const el = this.panel.querySelector('#setting-centerSun') as HTMLInputElement | null;
+        if (el) el.checked = partial.centerSun;
+      }
     });
   }
 
@@ -89,6 +93,27 @@ export class SettingsPanel {
           <label>Twilight Bands</label>
           <label class="toggle">
             <input type="checkbox" id="setting-showTwilightBands" ${settings.showTwilightBands ? 'checked' : ''}>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <label>Center on Sun</label>
+          <label class="toggle">
+            <input type="checkbox" id="setting-centerSun" ${settings.centerSun ? 'checked' : ''}>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <label>Timezone Boundaries</label>
+          <label class="toggle">
+            <input type="checkbox" id="setting-showTimezoneBoundaries" ${settings.showTimezoneBoundaries ? 'checked' : ''}>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <label>Country Labels</label>
+          <label class="toggle">
+            <input type="checkbox" id="setting-showCountryLabels" ${settings.showCountryLabels ? 'checked' : ''}>
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -253,6 +278,9 @@ export class SettingsPanel {
     this.bindToggle('setting-showGridLines', 'showGridLines');
     this.bindToggle('setting-showTimezoneLabels', 'showTimezoneLabels');
     this.bindToggle('setting-showTwilightBands', 'showTwilightBands');
+    this.bindToggle('setting-centerSun', 'centerSun');
+    this.bindToggle('setting-showTimezoneBoundaries', 'showTimezoneBoundaries');
+    this.bindToggle('setting-showCountryLabels', 'showCountryLabels');
     this.bindToggle('setting-demoMode', 'demoMode');
     this.bindToggle('setting-showWatermark', 'showWatermark');
 

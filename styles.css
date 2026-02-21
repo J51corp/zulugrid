@@ -37,6 +37,14 @@ html, body {
   height: 100%;
 }
 
+#canvas-container.draggable {
+  cursor: grab;
+}
+
+#canvas-container.dragging {
+  cursor: grabbing;
+}
+
 #baseMap    { z-index: 1; }
 #terminator { z-index: 2; }
 #overlays   { z-index: 3; }

@@ -30,6 +30,9 @@ export class UILayer {
       img.onload = () => {
         this.brandingLogo = img;
       };
+      img.onerror = () => {
+        this.brandingLogo = null;
+      };
       img.src = logo;
     } else {
       this.brandingLogo = null;

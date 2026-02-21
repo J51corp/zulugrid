@@ -21,8 +21,10 @@ export const darkTheme: Theme = {
   textMuted: 'rgba(200, 208, 216, 0.4)',
   uiBackground: 'rgba(10, 15, 25, 0.80)',
   sunMarker: '#ffcc00',
+  moonMarker: '#d0d0e0',
   pinColor: '#ff6b6b',
   pinLabelColor: '#c8d0d8',
   gridLine: 'rgba(255, 255, 255, 0.08)',
   tzHighlight: '#ffcc00',
+  timezoneBorder: 'rgba(200, 200, 255, 0.5)',
 };

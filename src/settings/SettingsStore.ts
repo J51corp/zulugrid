@@ -14,6 +14,7 @@ export class SettingsStore {
     'theme', 'mapMode', 'brightness', 'demoMode', 'demoSpeed',
     'brandingLogo', 'brandingTitle', 'showWatermark',
     'selectedPinTemplate', 'showTwilightBands', 'showGridLines', 'showTimezoneLabels',
+    'centerSun', 'showTimezoneBoundaries', 'showCountryLabels',
   ]);
 
   private load(): Settings {

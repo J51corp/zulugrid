@@ -43,10 +43,12 @@ export interface Theme {
   textMuted: string;
   uiBackground: string;
   sunMarker: string;
+  moonMarker: string;
   pinColor: string;
   pinLabelColor: string;
   gridLine: string;
   tzHighlight: string;    // UTC highlight color
+  timezoneBorder: string;
 }
 
 /** Application settings persisted to localStorage */
@@ -63,6 +65,9 @@ export interface Settings {
   showTwilightBands: boolean;
   showGridLines: boolean;
   showTimezoneLabels: boolean;
+  centerSun: boolean;
+  showTimezoneBoundaries: boolean;
+  showCountryLabels: boolean;
 }
 
 /** Default settings */
@@ -79,6 +84,9 @@ export const DEFAULT_SETTINGS: Settings = {
   showTwilightBands: true,
   showGridLines: true,
   showTimezoneLabels: true,
+  centerSun: false,
+  showTimezoneBoundaries: false,
+  showCountryLabels: false,
 };
 
 /** Typed event map for the application event bus */

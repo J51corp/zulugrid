@@ -21,8 +21,10 @@ export const modernTheme: Theme = {
   textMuted: 'rgba(0, 0, 0, 0.4)',
   uiBackground: 'rgba(255, 255, 255, 0.80)',
   sunMarker: '#ff8c00',
+  moonMarker: '#b0b0c8',
   pinColor: '#e74c3c',
   pinLabelColor: '#222222',
   gridLine: 'rgba(0, 0, 0, 0.1)',
   tzHighlight: '#e74c3c',
+  timezoneBorder: 'rgba(100, 100, 200, 0.55)',
 };
