@@ -6,7 +6,17 @@ ZuluGrid renders a real-time geopolitical Mercator world map with day/night term
 
 **Built entirely by Claude** (Anthropic's AI assistant) — from architecture and astronomy math to canvas rendering and UI design.
 
-![ZuluGrid Screenshot](https://raw.githubusercontent.com/J51corp/zulugrid/main/docs/screenshot.png)
+### Classic Geochron Theme
+![Classic Theme](docs/screenshot-classic.png)
+
+### Modern Atlas Theme
+![Modern Theme](docs/screenshot-modern.png)
+
+### Dark Theme
+![Dark Theme](docs/screenshot-dark.png)
+
+### Settings Panel
+![Settings](docs/screenshot-settings.png)
 
 ## Inspired by the Geochron
 
