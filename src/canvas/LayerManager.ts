@@ -40,6 +40,12 @@ export class LayerManager {
     });
     this.resizeObserver.observe(this.container);
 
+    // Fallback: window resize event catches cases ResizeObserver may miss
+    window.addEventListener('resize', () => {
+      const { width, height } = this.container.getBoundingClientRect();
+      this.resize(width, height);
+    });
+
     // Initial size
     const rect = this.container.getBoundingClientRect();
     this.resize(rect.width, rect.height);
@@ -57,10 +63,9 @@ export class LayerManager {
     this._height = h;
 
     for (const layer of Object.values(this.layers)) {
+      // Set canvas resolution (not display size — CSS handles that via width/height: 100%)
       layer.canvas.width = w * dpr;
       layer.canvas.height = h * dpr;
-      layer.canvas.style.width = `${w}px`;
-      layer.canvas.style.height = `${h}px`;
       layer.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
