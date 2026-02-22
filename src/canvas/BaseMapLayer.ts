@@ -37,10 +37,13 @@ export class BaseMapLayer {
 
   private setupProjection() {
     const { width, height } = this.lm;
-    // Scale so that 360° of longitude fills the full canvas width.
-    // Equirectangular: scale = width / (2π) maps 360° to width pixels.
-    // Multiply by zoomLevel to zoom in.
-    const scale = (width / (2 * Math.PI)) * this.zoomLevel;
+    // Scale to fill the canvas regardless of aspect ratio.
+    // Equirectangular: scale = width/(2π) fits 360° of longitude to width,
+    // scale = height/π fits 180° of latitude to height.
+    // Use the larger so the map always covers the full canvas.
+    const scaleForWidth = width / (2 * Math.PI);
+    const scaleForHeight = height / Math.PI;
+    const scale = Math.max(scaleForWidth, scaleForHeight) * this.zoomLevel;
     this.projection = geoEquirectangular()
       .center([this.scrollOffset, this.centerLat])
       .scale(scale)
@@ -122,8 +125,8 @@ export class BaseMapLayer {
 
     // Draw countries with wrapping: render three copies offset by the full
     // 360° map width so features clipped at the antimeridian appear seamlessly.
-    // At zoom > 1, 360° spans more than the canvas width.
-    const mapWidth = width * this.zoomLevel;
+    // 2π * scale gives the pixel width of 360° at the current zoom/aspect.
+    const mapWidth = 2 * Math.PI * (this.projection.scale?.() ?? width / (2 * Math.PI));
     for (const dx of [-mapWidth, 0, mapWidth]) {
       ctx.save();
       ctx.translate(dx, 0);
