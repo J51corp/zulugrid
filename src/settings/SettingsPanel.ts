@@ -131,10 +131,10 @@ export class SettingsPanel {
         <div id="pin-list" class="pin-list"></div>
         <div class="pin-add-form" id="pin-add-form">
           <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
-            <input type="text" id="pin-add-name" placeholder="City name" class="pin-input" style="flex:1; min-width:80px;">
+            <input type="text" id="pin-add-name" placeholder="City name" maxlength="50" class="pin-input" style="flex:1; min-width:80px;">
             <input type="number" id="pin-add-lat" placeholder="Lat" class="pin-input" style="width:60px;" step="any">
             <input type="number" id="pin-add-lng" placeholder="Lng" class="pin-input" style="width:60px;" step="any">
-            <input type="text" id="pin-add-tz" placeholder="Timezone" class="pin-input" style="flex:1; min-width:100px;" list="tz-suggestions">
+            <input type="text" id="pin-add-tz" placeholder="Timezone" maxlength="40" class="pin-input" style="flex:1; min-width:100px;" list="tz-suggestions">
             <button class="btn btn-primary" id="pin-add-btn" style="padding:4px 10px; font-size:12px;">Add</button>
           </div>
           <datalist id="tz-suggestions">
@@ -187,7 +187,7 @@ export class SettingsPanel {
           <label>Title</label>
           <input type="text" id="setting-brandingTitle"
                  value="${escapeHtml(settings.brandingTitle)}"
-                 placeholder="Company Name"
+                 placeholder="Company Name" maxlength="100"
                  class="pin-input" style="width:140px;">
         </div>
         <div class="settings-row">
@@ -314,7 +314,12 @@ export class SettingsPanel {
         }
         const reader = new FileReader();
         reader.onload = () => {
-          this.store.set('brandingLogo', reader.result as string);
+          const dataUrl = reader.result as string;
+          if (!dataUrl.startsWith('data:image/')) {
+            logoEl.value = '';
+            return;
+          }
+          this.store.set('brandingLogo', dataUrl);
         };
         reader.readAsDataURL(file);
       }
